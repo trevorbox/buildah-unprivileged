@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-buildah-as-user-1000
+spec:
+  serviceAccountName: pipelines-sa-userid-1000
+  params:
+  - name: URL
+    value: https://github.com/openshift/pipelines-vote-api
+  - name: IMAGE
+    value: image-registry.openshift-image-registry.svc:5000/test/buildahuser
+  # taskRef:
+  #   kind: Pipeline
+  #   name: pipeline-buildah-as-user-1000
+  pipelineRef:
+    name: pipeline-buildah-as-user-1000
+  workspaces:
+  - name: shared-workspace 
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi

@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-buildah-as-user-1000
+spec:
+  params:
+  - name: IMAGE
+  - name: URL
+  workspaces:
+  - name: shared-workspace
+  - name: sslcertdir
+    optional: true
+  tasks:
+  - name: fetch-repository 
+    taskRef:
+      name: git-clone
+      kind: ClusterTask
+    workspaces:
+    - name: output
+      workspace: shared-workspace
+    params:
+    - name: url
+      value: $(params.URL)
+    - name: subdirectory
+      value: ""
+    - name: deleteExisting
+      value: "true"
+  - name: buildah
+    taskRef:
+      name: buildah-as-user 
+    runAfter:
+    - fetch-repository
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    - name: sslcertdir
+      workspace: sslcertdir
+    params:
+    - name: IMAGE
+      value: $(params.IMAGE)

@@ -2,6 +2,35 @@
 
 Testing possible unprivileged buildah builds
 
+## pipeline
+
+> Steps copied from <https://docs.openshift.com/container-platform/4.12/cicd/pipelines/unprivileged-building-of-container-images-using-buildah.html>
+
+```sh
+helm upgrade -i pipeline helm/pipeline -n test --create-namespace
+oc apply -f pipelinerun.yaml -n test
+```
+
+Failure with retch-repository pod
+
+```text
+[tbox@fedora buildah-unprivileged]$ oc get events -n test
+LAST SEEN   TYPE      REASON                  OBJECT                                                      MESSAGE
+53m         Normal    Scheduled               pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Successfully assigned test/pipelinerun-buildah-as-user-1000-fetch-repository-pod to crc-9ltqk-master-0
+53m         Normal    AddedInterface          pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Add eth0 [10.217.0.219/23] from openshift-sdn
+53m         Normal    Pulled                  pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Container image "registry.redhat.io/openshift-pipelines/pipelines-entrypoint-rhel8@sha256:3580541d0912cdba214343b79868d2adcfa1c60a6e5ee940c255fa76d4431f07" already present on machine
+53m         Normal    Created                 pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Created container prepare
+53m         Normal    Started                 pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Started container prepare
+3m17s       Normal    Pulled                  pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Container image "registry.redhat.io/ubi8/ubi-minimal@sha256:c7b45019f4db32e536e69e102c4028b66bf5cde173cfff4ffd3281ccf7bb3863" already present on machine
+51m         Warning   Failed                  pod/pipelinerun-buildah-as-user-1000-fetch-repository-pod   Error: container has runAsNonRoot and image will run as root (pod: "pipelinerun-buildah-as-user-1000-fetch-repository-pod_test(003ef27e-eeae-4024-8d46-86d939d0d6ad)", container: place-scripts)
+53m         Normal    Started                 taskrun/pipelinerun-buildah-as-user-1000-fetch-repository   
+53m         Normal    Pending                 taskrun/pipelinerun-buildah-as-user-1000-fetch-repository   Pending
+53m         Normal    Pending                 taskrun/pipelinerun-buildah-as-user-1000-fetch-repository   pod status "Initialized":"False"; message: "containers with incomplete status: [prepare place-scripts]"
+53m         Normal    Pending                 taskrun/pipelinerun-buildah-as-user-1000-fetch-repository   pod status "Initialized":"False"; message: "containers with incomplete status: [place-scripts]"
+```
+
+## standalone container
+
 ```sh
 helm upgrade -i test helm/buildah-unprivileged -n test --create-namespace
 ```
@@ -56,3 +85,5 @@ Unable to read consumer identity
 Subscription Manager is operating in container mode.
 ...
 ```
+
+
