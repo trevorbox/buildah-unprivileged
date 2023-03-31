@@ -85,5 +85,3 @@ Unable to read consumer identity
 Subscription Manager is operating in container mode.
 ...
 ```
-
-
