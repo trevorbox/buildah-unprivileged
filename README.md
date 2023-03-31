@@ -4,14 +4,14 @@ Testing possible unprivileged buildah builds
 
 ## pipeline
 
-> Steps copied from <https://docs.openshift.com/container-platform/4.12/cicd/pipelines/unprivileged-building-of-container-images-using-buildah.html>
+Testing the buildah as user example from <https://docs.openshift.com/container-platform/4.12/cicd/pipelines/unprivileged-building-of-container-images-using-buildah.html>...
 
 ```sh
 helm upgrade -i pipeline helm/pipeline -n test --create-namespace
 oc apply -f pipelinerun.yaml -n test
 ```
 
-Failure with retch-repository pod
+Failure with fetch-repository pod...
 
 ```text
 [tbox@fedora buildah-unprivileged]$ oc get events -n test
@@ -31,11 +31,13 @@ LAST SEEN   TYPE      REASON                  OBJECT                            
 
 ## standalone container
 
+Attempt to use the SCC described in <https://docs.openshift.com/container-platform/4.12/cicd/pipelines/unprivileged-building-of-container-images-using-buildah.html> to run an unpriveleged buildah pod build.
+
 ```sh
 helm upgrade -i test helm/buildah-unprivileged -n test --create-namespace
 ```
 
-logs...
+logs (fails)...
 
 ```sh
 [tbox@fedora buildah-unprivileged]$ oc logs deploy/test-buildah-unprivileged -n test
